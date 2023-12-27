@@ -87,12 +87,9 @@ body {
 
 body {
   color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  background-color: rgb(15, 14, 19);
+  background-image: radial-gradient(at 0% 0%, rgb(97, 91, 130) 0px, transparent 70%), radial-gradient(at 50% 0%, rgb(73, 95, 163) 0px, transparent 50%), radial-gradient(at 100% 0%, rgb(114, 39, 65) 0px, transparent 50%);
+  background-repeat: no-repeat;
 }
 
 a {
