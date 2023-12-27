@@ -4,11 +4,13 @@ import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import { Rating, Stack } from "@mui/material";
+import { Rating, Stack, useMediaQuery } from "@mui/material";
 
 const PlaceInfo = () => {
   // TODO: Pegar o endereço dos items do contrato
   const mapQuery = "av afonso pena 2112 belo horizonte";
+
+  const isUnder400 = useMediaQuery("(max-width:400px)");
 
   const openMap = () => {
     window.open(
@@ -18,7 +20,9 @@ const PlaceInfo = () => {
   };
 
   return (
-    <Card sx={{ maxWidth: 345, m: 2 }}>
+    <Card
+      sx={{ maxWidth: isUnder400 ? 300 : 345, m: isUnder400 ? 0 : 2, mb: 2 }}
+    >
       <CardMedia
         sx={{ height: 140 }}
         image="https://mui.com/static/images/cards/paella.jpg"

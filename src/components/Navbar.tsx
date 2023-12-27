@@ -2,13 +2,14 @@ import { Button, Stack, Typography, useMediaQuery } from "@mui/material";
 
 const Navbar = () => {
   const isUnder818 = useMediaQuery("(max-width:818px)");
+  const isUnder400 = useMediaQuery("(max-width:400px)");
 
   return (
     <Stack
       direction="row"
       justifyContent="space-between"
       bgcolor="#000000"
-      sx={{ padding: "18px 32px" }}
+      sx={{ padding: isUnder400 ? "18px 12px" : "18px 32px" }}
     >
       <Typography
         variant="h6"
@@ -22,7 +23,7 @@ const Navbar = () => {
           WebkitTextFillColor: "transparent",
         }}
       >
-        Go Places
+        Places
       </Typography>
       {/* <Image
         width={146}
@@ -42,7 +43,7 @@ const Navbar = () => {
             mr: 2,
           }}
         >
-          Add New Place
+          New Place
         </Button>
         <Button
           variant="contained"

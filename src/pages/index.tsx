@@ -10,7 +10,12 @@ const Home = () => {
 
   return (
     <Stack p={4}>
-      <Stack pl={2} pr={2} direction="row" justifyContent="space-between">
+      <Stack
+        pl={isUnder818 ? 0 : 2}
+        pr={isUnder818 ? 0 : 2}
+        direction="row"
+        justifyContent="space-between"
+      >
         <Stack
           justifyContent="center"
           mb={4}
@@ -72,6 +77,7 @@ const Home = () => {
       {/* TODO: Ir carregando de 16 em 16 quando for baixando a tela */}
       <Grid container columns={12} justifyContent="space-between">
         <Grid
+          item
           xs="auto"
           sm="auto"
           md="auto"
@@ -82,6 +88,7 @@ const Home = () => {
           <PlaceInfo />
         </Grid>
         <Grid
+          item
           xs="auto"
           sm="auto"
           md="auto"
@@ -92,6 +99,7 @@ const Home = () => {
           <PlaceInfo />
         </Grid>
         <Grid
+          item
           xs="auto"
           sm="auto"
           md="auto"
@@ -102,6 +110,7 @@ const Home = () => {
           <PlaceInfo />
         </Grid>
         <Grid
+          item
           xs="auto"
           sm="auto"
           md="auto"
