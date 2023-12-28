@@ -80,45 +80,45 @@ const Home = () => {
           item
           xs="auto"
           sm="auto"
-          md="auto"
+          md={4}
           lg="auto"
           xl="auto"
           margin={isUnder818 ? "auto" : 0}
         >
-          <PlaceInfo />
+          <PlaceInfo name="Lizard" />
         </Grid>
         <Grid
           item
           xs="auto"
           sm="auto"
-          md="auto"
+          md={4}
           lg="auto"
           xl="auto"
           margin={isUnder818 ? "auto" : 0}
         >
-          <PlaceInfo />
+          <PlaceInfo name="Bagulho" />
         </Grid>
         <Grid
           item
           xs="auto"
           sm="auto"
-          md="auto"
+          md={4}
           lg="auto"
           xl="auto"
           margin={isUnder818 ? "auto" : 0}
         >
-          <PlaceInfo />
+          <PlaceInfo name="Coffe and Happy" />
         </Grid>
         <Grid
           item
           xs="auto"
           sm="auto"
-          md="auto"
+          md={4}
           lg="auto"
           xl="auto"
           margin={isUnder818 ? "auto" : 0}
         >
-          <PlaceInfo />
+          <PlaceInfo name="Underground Train" />
         </Grid>
       </Grid>
     </Stack>

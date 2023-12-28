@@ -1,8 +1,11 @@
 import { Button, Stack, Typography, useMediaQuery } from "@mui/material";
+import { useState } from "react";
+import NewPlaceDialog from "./dialogs/NewPlaceDialog";
 
 const Navbar = () => {
   const isUnder818 = useMediaQuery("(max-width:818px)");
   const isUnder400 = useMediaQuery("(max-width:400px)");
+  const [openNewPlaceDialog, setOpenNewPlaceDialog] = useState(false);
 
   return (
     <Stack
@@ -33,6 +36,7 @@ const Navbar = () => {
       /> */}
       <Stack direction="row">
         <Button
+          onClick={() => setOpenNewPlaceDialog(true)}
           variant="contained"
           size={isUnder818 ? "small" : "medium"}
           sx={{
@@ -58,6 +62,11 @@ const Navbar = () => {
           Connect Wallet
         </Button>
       </Stack>
+
+      <NewPlaceDialog
+        open={openNewPlaceDialog}
+        onClose={() => setOpenNewPlaceDialog(false)}
+      />
     </Stack>
   );
 };

@@ -5,12 +5,20 @@ import CardMedia from "@mui/material/CardMedia";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { Rating, Stack, useMediaQuery } from "@mui/material";
+import { useState } from "react";
+import VoteDialog from "./dialogs/VoteDialog";
 
-const PlaceInfo = () => {
+type Props = {
+  name: string;
+};
+
+const PlaceInfo = ({ name }: Props) => {
   // TODO: Pegar o endereço dos items do contrato
   const mapQuery = "av afonso pena 2112 belo horizonte";
 
   const isUnder400 = useMediaQuery("(max-width:400px)");
+
+  const [openVoteDialog, setOpenVoteDialog] = useState(false);
 
   const openMap = () => {
     window.open(
@@ -30,7 +38,7 @@ const PlaceInfo = () => {
       />
       <CardContent>
         <Typography gutterBottom variant="h5" component="div">
-          Lizard
+          {name}
         </Typography>
         <Typography variant="body2" color="text.secondary">
           Lizards are a widespread group of squamate reptiles, with over 6,000
@@ -40,12 +48,19 @@ const PlaceInfo = () => {
       <CardActions>
         <Stack direction="row" justifyContent="space-between" width="100%">
           <Rating sx={{ ml: 1 }} name="simple-controlled" value={2} readOnly />
-          <Button size="small">Rate it</Button>
+          <Button size="small" onClick={() => setOpenVoteDialog(true)}>
+            Rate it
+          </Button>
           <Button size="small" onClick={openMap}>
             Open Map
           </Button>
         </Stack>
       </CardActions>
+      <VoteDialog
+        placeName={name}
+        open={openVoteDialog}
+        onClose={() => setOpenVoteDialog(false)}
+      />
     </Card>
   );
 };
