@@ -7,6 +7,7 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import {
   Box,
+  CircularProgress,
   FormControl,
   InputLabel,
   MenuItem,
@@ -14,23 +15,35 @@ import {
   Stack,
 } from "@mui/material";
 import { useState } from "react";
+import useCSCService from "@dapp/hooks/useCSCService";
+import Observable from "@dapp/utils/observable";
 
 type Props = {
   open: boolean;
   onClose: () => void;
 };
 
+export const addNewPlaceObservable = new Observable();
+
+const defaultForm = {
+  name: "",
+  address: "",
+  country: "",
+  state_or_province: "",
+  city: "",
+  picture_url: "",
+  description: "",
+  type: "",
+};
+
 export default function NewPlaceDialog({ open, onClose }: Props) {
-  const [form, setForm] = useState({
-    name: "",
-    address: "",
-    country: "",
-    state_or_province: "",
-    city: "",
-    picture_url: "",
-    description: "",
-    type: "",
-  });
+  const [form, setForm] = useState(defaultForm);
+
+  const { countries, states, loadingStates, cities, loadingCities } =
+    useCSCService(
+      form.country.split("-")[1], //iso2
+      form.state_or_province.split("-")[1] //iso2
+    );
 
   const [loading, setLoading] = useState(false);
 
@@ -46,11 +59,23 @@ export default function NewPlaceDialog({ open, onClose }: Props) {
 
   const createPlace = () => {
     if (canAdd) {
+      // TODO: Call contract to add place
+      setLoading(true);
+      setTimeout(() => {
+        setLoading(false);
+        addNewPlaceObservable.notify({});
+        closeHandler();
+      }, 5000);
     }
   };
 
+  const closeHandler = () => {
+    setForm(defaultForm);
+    onClose();
+  };
+
   return (
-    <Dialog open={open} onClose={onClose}>
+    <Dialog open={open} onClose={closeHandler}>
       <DialogTitle>{`New place`}</DialogTitle>
       <DialogContent>
         <DialogContentText>
@@ -59,91 +84,187 @@ export default function NewPlaceDialog({ open, onClose }: Props) {
         </DialogContentText>
 
         {loading ? (
-          <p>Loading</p>
+          <Stack alignItems="center" direction="column" m={2}>
+            <CircularProgress />
+          </Stack>
         ) : (
           <Stack>
             <TextField
-              autoFocus
               margin="dense"
               label="Name"
               variant="standard"
               value={form.name}
               onChange={(e) => setForm({ ...form, name: e.target.value })}
             />
-            <TextField
-              margin="dense"
-              label="Address"
-              variant="standard"
-              value={form.address}
-              onChange={(e) => setForm({ ...form, address: e.target.value })}
-            />
-            <TextField
-              margin="dense"
-              label="Country"
-              variant="standard"
-              value={form.country}
-              onChange={(e) => setForm({ ...form, country: e.target.value })}
-            />
-            <TextField
-              margin="dense"
-              label="State/Province"
-              variant="standard"
-              value={form.state_or_province}
-              onChange={(e) =>
-                setForm({ ...form, state_or_province: e.target.value })
-              }
-            />
-            <TextField
-              margin="dense"
-              label="City"
-              variant="standard"
-              value={form.city}
-              onChange={(e) => setForm({ ...form, city: e.target.value })}
-            />
-            <TextField
-              margin="dense"
-              label="Picture URL"
-              variant="standard"
-              value={form.picture_url}
-              onChange={(e) =>
-                setForm({ ...form, picture_url: e.target.value })
-              }
-            />
-            <TextField
-              margin="dense"
-              value={form.description}
-              onChange={(e) =>
-                setForm({ ...form, description: e.target.value })
-              }
-              id="feedback"
-              label="Description"
-              type="text"
-              multiline
-              variant="standard"
-            />
-            <Box mt={3}>
-              <FormControl fullWidth>
-                <InputLabel id="demo-simple-select-label">Type</InputLabel>
-                <Select
-                  labelId="type"
-                  label="Select a Type"
-                  value={form.type}
+
+            {form.name && (
+              <TextField
+                margin="dense"
+                label="Picture URL"
+                variant="standard"
+                value={form.picture_url}
+                onChange={(e) =>
+                  setForm({ ...form, picture_url: e.target.value })
+                }
+              />
+            )}
+
+            {form.picture_url && (
+              <TextField
+                margin="dense"
+                value={form.description}
+                onChange={(e) =>
+                  setForm({ ...form, description: e.target.value })
+                }
+                id="feedback"
+                label="Description"
+                type="text"
+                multiline
+                variant="standard"
+              />
+            )}
+
+            {form.description && (
+              <Box mt={3}>
+                <FormControl fullWidth>
+                  <InputLabel id="demo-simple-select-label">Type</InputLabel>
+                  <Select
+                    labelId="type"
+                    label="Select a Type"
+                    value={form.type}
+                    onChange={(e) =>
+                      setForm({ ...form, type: e.target.value as string })
+                    }
+                  >
+                    <MenuItem value="house">House</MenuItem>
+                    <MenuItem value="building">Building</MenuItem>
+                    <MenuItem value="travel">Travel</MenuItem>
+                    <MenuItem value="food">Food</MenuItem>
+                    <MenuItem value="landscape">Landscape</MenuItem>
+                    <MenuItem value="shopping">Shopping</MenuItem>
+                    <MenuItem value="company">Company</MenuItem>
+                    <MenuItem value="service">Service</MenuItem>
+                    <MenuItem value="store">Store</MenuItem>
+                    <MenuItem value="beach">Beach</MenuItem>
+                    <MenuItem value="health">Health</MenuItem>
+                    <MenuItem value="hospital">Hospital</MenuItem>
+                    <MenuItem value="movie theater">Movie Theater</MenuItem>
+                    <MenuItem value="movie theater">Theater</MenuItem>
+                    <MenuItem value="other">Other</MenuItem>
+                  </Select>
+                </FormControl>
+              </Box>
+            )}
+
+            {/* Country */}
+            {form.type && (
+              <Box mt={3}>
+                <FormControl fullWidth>
+                  <InputLabel id="demo-simple-select-label">Country</InputLabel>
+                  <Select
+                    labelId="country"
+                    label="Country"
+                    value={form.country}
+                    onChange={(e) => {
+                      setForm({
+                        ...form,
+                        country: e.target.value,
+                      });
+                    }}
+                  >
+                    {countries.map((country) => (
+                      <MenuItem
+                        key={country.id}
+                        value={`${country.name}-${country.iso2}`}
+                      >
+                        {country.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Box>
+            )}
+
+            {/* State or Province */}
+            {form.country && !loadingStates && states.length > 0 && (
+              <Box mt={3}>
+                <FormControl fullWidth>
+                  <InputLabel>State/Province</InputLabel>
+                  <Select
+                    labelId="state_or_province"
+                    label="State/Province"
+                    value={form.state_or_province}
+                    onChange={(e) =>
+                      setForm({
+                        ...form,
+                        state_or_province: e.target.value,
+                      })
+                    }
+                  >
+                    {states.map((state) => (
+                      <MenuItem
+                        key={state.id}
+                        value={`${state.name}-${state.iso2}`}
+                      >
+                        {state.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Box>
+            )}
+
+            {/* Cities */}
+            {form.state_or_province && !loadingCities && cities.length > 0 && (
+              <Box mt={3}>
+                <FormControl fullWidth>
+                  <InputLabel>City</InputLabel>
+                  <Select
+                    labelId="state_or_province"
+                    label="City"
+                    value={form.city}
+                    onChange={(e) =>
+                      setForm({
+                        ...form,
+                        city: e.target.value,
+                      })
+                    }
+                  >
+                    {cities.map((city) => (
+                      <MenuItem key={city.id} value={city.name}>
+                        {city.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Box>
+            )}
+
+            {form.city && (
+              <Stack mt={1}>
+                <TextField
+                  margin="dense"
+                  label="Address"
+                  variant="standard"
+                  value={form.address}
                   onChange={(e) =>
-                    setForm({ ...form, type: e.target.value as string })
+                    setForm({ ...form, address: e.target.value })
                   }
-                >
-                  <MenuItem value={10}>Ten</MenuItem>
-                  <MenuItem value={20}>Twenty</MenuItem>
-                  <MenuItem value={30}>Thirty</MenuItem>
-                </Select>
-              </FormControl>
-            </Box>
+                />
+              </Stack>
+            )}
+
+            {(loadingStates || loadingCities) && (
+              <Stack alignItems="center" direction="column" m={2}>
+                <CircularProgress />
+              </Stack>
+            )}
           </Stack>
         )}
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
-        <Button disabled={!canAdd} onClick={onClose}>
+        <Button onClick={closeHandler}>Cancel</Button>
+        <Button disabled={!canAdd} onClick={createPlace}>
           Add
         </Button>
       </DialogActions>

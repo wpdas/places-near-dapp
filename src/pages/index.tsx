@@ -3,10 +3,25 @@ import Search from "@dapp/components/Search";
 import { Box, Grid, Stack, Typography, useMediaQuery } from "@mui/material";
 import Image from "next/image";
 import nearLogo from "@dapp/images/near-logo.png";
+import useCSCService from "@dapp/hooks/useCSCService";
+import { useEffect } from "react";
+import { addNewPlaceObservable } from "@dapp/components/dialogs/NewPlaceDialog";
 
 const Home = () => {
   const isUnder1230 = useMediaQuery("(max-width:1230px)");
   const isUnder818 = useMediaQuery("(max-width:818px)");
+  useCSCService();
+
+  useEffect(() => {
+    const handler = () => {
+      // TODO: reload places
+      console.log("TODO: Reload places");
+    };
+    addNewPlaceObservable.subscribe(handler);
+    return () => {
+      addNewPlaceObservable.unsubscribe(handler);
+    };
+  }, []);
 
   return (
     <Stack p={4}>
