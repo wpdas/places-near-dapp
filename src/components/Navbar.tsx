@@ -1,11 +1,27 @@
 import { Button, Stack, Typography, useMediaQuery } from "@mui/material";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import NewPlaceDialog from "./dialogs/NewPlaceDialog";
+import { wallet } from "@dapp/web3-services";
 
 const Navbar = () => {
   const isUnder818 = useMediaQuery("(max-width:818px)");
   const isUnder400 = useMediaQuery("(max-width:400px)");
   const [openNewPlaceDialog, setOpenNewPlaceDialog] = useState(false);
+  const [isUserConnected, setIsUserConnected] = useState<
+    "yes" | "no" | "pending"
+  >("pending");
+
+  // Check if user is connected
+  useEffect(() => {
+    (async () => {
+      const isConnected = await wallet.isSignedIn();
+      setIsUserConnected(isConnected ? "yes" : "no");
+    })();
+  }, []);
+
+  const connectWalletHandler = useCallback(() => {
+    wallet.startUp(true);
+  }, []);
 
   return (
     <Stack
@@ -44,23 +60,29 @@ const Navbar = () => {
             color: "#ffffff",
             textTransform: "none",
             fontSize: 16,
-            mr: 2,
+            mr: isUserConnected !== "yes" ? 2 : 0,
           }}
         >
           New Place
         </Button>
-        <Button
-          variant="contained"
-          size={isUnder818 ? "small" : "medium"}
-          sx={{
-            background: "#2852E3",
-            color: "#ffffff",
-            textTransform: "none",
-            fontSize: 16,
-          }}
-        >
-          Connect Wallet
-        </Button>
+
+        {isUserConnected !== "yes" && (
+          <Button
+            variant="contained"
+            size={isUnder818 ? "small" : "medium"}
+            sx={{
+              background: "#2852E3",
+              color: "#ffffff",
+              textTransform: "none",
+              fontSize: 16,
+            }}
+            onClick={connectWalletHandler}
+          >
+            {isUserConnected === "pending" ? "..." : "Connect Wallet"}
+          </Button>
+        )}
+
+        {/* TODO: Mostrar quantidade de NEAR quando tiver connectado */}
       </Stack>
 
       <NewPlaceDialog

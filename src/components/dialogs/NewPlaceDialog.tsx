@@ -17,6 +17,7 @@ import {
 import { useState } from "react";
 import useCSCService from "@dapp/hooks/useCSCService";
 import Observable from "@dapp/utils/observable";
+import { contract } from "@dapp/web3-services";
 
 type Props = {
   open: boolean;
@@ -57,15 +58,27 @@ export default function NewPlaceDialog({ open, onClose }: Props) {
     form.description &&
     form.type;
 
-  const createPlace = () => {
+  const createPlace = async () => {
     if (canAdd) {
-      // TODO: Call contract to add place
       setLoading(true);
-      setTimeout(() => {
-        setLoading(false);
-        addNewPlaceObservable.notify({});
-        closeHandler();
-      }, 5000);
+
+      const result = await contract.addPlace({
+        name: form.name,
+        description: form.description,
+        pictures: [form.picture_url],
+        place_type: form.type,
+        address: {
+          address: form.address,
+          country: form.country.split("-")[0], // name
+          state_or_province: form.state_or_province.split("-")[0], // name
+          city: form.city,
+        },
+      });
+
+      // End of process
+      setLoading(false);
+      addNewPlaceObservable.notify({});
+      closeHandler();
     }
   };
 

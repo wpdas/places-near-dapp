@@ -4,8 +4,9 @@ import { Box, Grid, Stack, Typography, useMediaQuery } from "@mui/material";
 import Image from "next/image";
 import nearLogo from "@dapp/images/near-logo.png";
 import useCSCService from "@dapp/hooks/useCSCService";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { addNewPlaceObservable } from "@dapp/components/dialogs/NewPlaceDialog";
+import { contract } from "@dapp/web3-services";
 
 const Home = () => {
   const isUnder1230 = useMediaQuery("(max-width:1230px)");
@@ -21,6 +22,18 @@ const Home = () => {
     return () => {
       addNewPlaceObservable.unsubscribe(handler);
     };
+  }, []);
+
+  // Load places
+  // TODO: Criar interface para o Place
+  // TODO: Colocar um visual de Loading enquanto carrega Places
+  const [places, setPlaces] = useState<any>([]);
+  useEffect(() => {
+    (async () => {
+      const _places = await contract.getPlaces();
+      setPlaces(_places);
+      console.log("PLACESSSS", _places);
+    })();
   }, []);
 
   return (
@@ -91,6 +104,26 @@ const Home = () => {
 
       {/* TODO: Ir carregando de 16 em 16 quando for baixando a tela */}
       <Grid container columns={12} justifyContent="space-between">
+        {places.map((place: any) => (
+          <Grid
+            key={place.id}
+            item
+            xs="auto"
+            sm="auto"
+            md={4}
+            lg="auto"
+            xl="auto"
+            margin={isUnder818 ? "auto" : 0}
+          >
+            <PlaceInfo
+              name={place.name}
+              imageUrl={place.pictures[0]}
+              avarageVotes={place.avarage_votes}
+              address={place.address}
+              description={place.description}
+            />
+          </Grid>
+        ))}
         <Grid
           item
           xs="auto"
