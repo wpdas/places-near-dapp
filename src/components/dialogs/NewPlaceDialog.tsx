@@ -16,15 +16,13 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import useCSCService from "@dapp/hooks/useCSCService";
-import Observable from "@dapp/utils/observable";
 import { contract } from "@dapp/web3-services";
+import { placesUpdateObservable } from "@dapp/utils/observables";
 
 type Props = {
   open: boolean;
   onClose: () => void;
 };
-
-export const addNewPlaceObservable = new Observable();
 
 const defaultForm = {
   name: "",
@@ -77,7 +75,7 @@ export default function NewPlaceDialog({ open, onClose }: Props) {
 
       // End of process
       setLoading(false);
-      addNewPlaceObservable.notify({});
+      placesUpdateObservable.notify({});
       closeHandler();
     }
   };
@@ -276,8 +274,10 @@ export default function NewPlaceDialog({ open, onClose }: Props) {
         )}
       </DialogContent>
       <DialogActions>
-        <Button onClick={closeHandler}>Cancel</Button>
-        <Button disabled={!canAdd} onClick={createPlace}>
+        <Button disabled={loading} onClick={closeHandler}>
+          Cancel
+        </Button>
+        <Button disabled={!canAdd || loading} onClick={createPlace}>
           Add
         </Button>
       </DialogActions>

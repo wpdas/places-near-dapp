@@ -10,6 +10,7 @@ import VoteDialog from "./dialogs/VoteDialog";
 import { Address } from "@dapp/web3-services/near-interface";
 
 type Props = {
+  id: number;
   name: string;
   imageUrl: string;
   avarageVotes: number;
@@ -18,18 +19,19 @@ type Props = {
 };
 
 const PlaceInfo = ({
+  id,
   name,
   imageUrl,
   avarageVotes,
   address,
   description,
 }: Props) => {
-  // TODO: Definir o tamanho minimo para o CARD
+  const maxWidth454 = useMediaQuery("(max-width:454px)");
+  const [openVoteDialog, setOpenVoteDialog] = useState(false);
+
   const mapQuery = address
     ? `${address.address}, ${address.city}, ${address.state_or_province}, ${address.country}`
     : "Brazil";
-  const isUnder400 = useMediaQuery("(max-width:400px)");
-  const [openVoteDialog, setOpenVoteDialog] = useState(false);
 
   const openMap = () => {
     window.open(
@@ -40,28 +42,45 @@ const PlaceInfo = ({
 
   return (
     <Card
-      sx={{ maxWidth: isUnder400 ? 300 : 345, m: isUnder400 ? 0 : 2, mb: 2 }}
+      sx={{
+        width: maxWidth454 ? "100%" : 345,
+        minHeight: 315,
+        m: maxWidth454 ? 0 : 2,
+        mb: 2,
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
+      }}
     >
-      <CardMedia
-        sx={{ height: 140 }}
-        // image="https://mui.com/static/images/cards/paella.jpg"
-        // image={imageUrl}
-        image={imageUrl || "https://mui.com/static/images/cards/paella.jpg"}
-        title={name}
-      />
-      <CardContent>
-        <Typography gutterBottom variant="h5" component="div">
-          {name}
-        </Typography>
-        <Typography variant="body2" color="text.secondary">
-          {description ||
-            "Lizards are a widespread group of squamate reptiles, with over 6,000 species, ranging across all continents except Antarctica"}
-        </Typography>
-      </CardContent>
+      <Stack>
+        <CardMedia
+          sx={{ height: 140 }}
+          // image="https://mui.com/static/images/cards/paella.jpg"
+          // image={imageUrl}
+          image={imageUrl || "https://mui.com/static/images/cards/paella.jpg"}
+          title={name}
+        />
+        <CardContent>
+          <Typography gutterBottom variant="h5" component="div">
+            {name}
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            {description ||
+              "Lizards are a widespread group of squamate reptiles, with over 6,000 species, ranging across all continents except Antarctica"}
+          </Typography>
+        </CardContent>
+      </Stack>
+
       <CardActions>
-        <Stack direction="row" justifyContent="space-between" width="100%">
+        <Stack
+          direction="row"
+          justifyContent="space-between"
+          width="100%"
+          flexDirection={maxWidth454 ? "column" : "row"}
+          alignItems={maxWidth454 ? "center" : "start"}
+        >
           <Rating
-            sx={{ ml: 1 }}
+            sx={{ ml: 1, mb: maxWidth454 ? 1 : 0 }}
             name="simple-controlled"
             value={avarageVotes}
             readOnly
@@ -75,6 +94,7 @@ const PlaceInfo = ({
         </Stack>
       </CardActions>
       <VoteDialog
+        placeId={id}
         placeName={name}
         open={openVoteDialog}
         onClose={() => setOpenVoteDialog(false)}

@@ -1,40 +1,40 @@
 import PlaceInfo from "@dapp/components/PlaceInfo";
 import Search from "@dapp/components/Search";
-import { Box, Grid, Stack, Typography, useMediaQuery } from "@mui/material";
+import { Box, Stack, Typography, useMediaQuery } from "@mui/material";
 import Image from "next/image";
 import nearLogo from "@dapp/images/near-logo.png";
 import useCSCService from "@dapp/hooks/useCSCService";
-import { useEffect, useState } from "react";
-import { addNewPlaceObservable } from "@dapp/components/dialogs/NewPlaceDialog";
+import { useCallback, useEffect, useState } from "react";
 import { contract } from "@dapp/web3-services";
+import { placesUpdateObservable } from "@dapp/utils/observables";
 
 const Home = () => {
   const isUnder1230 = useMediaQuery("(max-width:1230px)");
   const isUnder818 = useMediaQuery("(max-width:818px)");
   useCSCService();
 
+  // TODO: Criar interface para o Place
+  const [places, setPlaces] = useState<any>([]);
+  const fetchPlaces = useCallback(async () => {
+    const _places = await contract.getPlaces();
+    setPlaces(_places);
+    console.log("PLACESSSS", _places);
+  }, [setPlaces]);
+
   useEffect(() => {
     const handler = () => {
-      // TODO: reload places
-      console.log("TODO: Reload places");
+      fetchPlaces();
     };
-    addNewPlaceObservable.subscribe(handler);
+    placesUpdateObservable.subscribe(handler);
     return () => {
-      addNewPlaceObservable.unsubscribe(handler);
+      placesUpdateObservable.unsubscribe(handler);
     };
-  }, []);
+  }, [fetchPlaces]);
 
   // Load places
-  // TODO: Criar interface para o Place
-  // TODO: Colocar um visual de Loading enquanto carrega Places
-  const [places, setPlaces] = useState<any>([]);
   useEffect(() => {
-    (async () => {
-      const _places = await contract.getPlaces();
-      setPlaces(_places);
-      console.log("PLACESSSS", _places);
-    })();
-  }, []);
+    fetchPlaces();
+  }, [fetchPlaces]);
 
   return (
     <Stack p={4}>
@@ -103,72 +103,30 @@ const Home = () => {
       </Stack>
 
       {/* TODO: Ir carregando de 16 em 16 quando for baixando a tela */}
-      <Grid container columns={12} justifyContent="space-between">
+      {/* TODO: Usar Flex ao inves de Grid */}
+
+      <Stack
+        direction="row"
+        flexWrap="wrap"
+        justifyContent={isUnder818 ? "center" : "space-between"}
+      >
         {places.map((place: any) => (
-          <Grid
+          <PlaceInfo
             key={place.id}
-            item
-            xs="auto"
-            sm="auto"
-            md={4}
-            lg="auto"
-            xl="auto"
-            margin={isUnder818 ? "auto" : 0}
-          >
-            <PlaceInfo
-              name={place.name}
-              imageUrl={place.pictures[0]}
-              avarageVotes={place.avarage_votes}
-              address={place.address}
-              description={place.description}
-            />
-          </Grid>
+            id={place.id}
+            name={place.name}
+            imageUrl={place.pictures[0]}
+            avarageVotes={place.avarage_votes}
+            address={place.address}
+            description={place.description}
+          />
         ))}
-        <Grid
-          item
-          xs="auto"
-          sm="auto"
-          md={4}
-          lg="auto"
-          xl="auto"
-          margin={isUnder818 ? "auto" : 0}
-        >
-          <PlaceInfo name="Lizard" />
-        </Grid>
-        <Grid
-          item
-          xs="auto"
-          sm="auto"
-          md={4}
-          lg="auto"
-          xl="auto"
-          margin={isUnder818 ? "auto" : 0}
-        >
-          <PlaceInfo name="Bagulho" />
-        </Grid>
-        <Grid
-          item
-          xs="auto"
-          sm="auto"
-          md={4}
-          lg="auto"
-          xl="auto"
-          margin={isUnder818 ? "auto" : 0}
-        >
-          <PlaceInfo name="Coffe and Happy" />
-        </Grid>
-        <Grid
-          item
-          xs="auto"
-          sm="auto"
-          md={4}
-          lg="auto"
-          xl="auto"
-          margin={isUnder818 ? "auto" : 0}
-        >
-          <PlaceInfo name="Underground Train" />
-        </Grid>
-      </Grid>
+
+        <PlaceInfo name="Lizard" />
+        <PlaceInfo name="Lizard" />
+        <PlaceInfo name="Lizard" />
+        <PlaceInfo name="Lizard" />
+      </Stack>
     </Stack>
   );
 };

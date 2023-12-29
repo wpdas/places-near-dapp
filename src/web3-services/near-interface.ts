@@ -52,14 +52,15 @@ export class PlacesContractInterface {
    * Compute rating (vote)
    * @param placeId
    * @param vote
+   * @param feedback
    * @returns
    */
-  async vote(placeId: number, vote: number) {
+  async vote(placeId: number, vote: number, feedback?: string) {
     const fixedVote = Math.min(Math.max(vote, 0), 5); // Ensure the value is between 0 and 5
 
     return await this.wallet.callMethod({
       method: "vote",
-      args: { place_id: placeId, vote: fixedVote },
+      args: { place_id: placeId, vote: fixedVote, feedback },
     });
   }
 }

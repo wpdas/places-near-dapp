@@ -1,7 +1,10 @@
-import { Button, Stack, Typography, useMediaQuery } from "@mui/material";
+import { Button, Stack, useMediaQuery } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
 import NewPlaceDialog from "./dialogs/NewPlaceDialog";
 import { wallet } from "@dapp/web3-services";
+import Image from "next/image";
+import placesLogo from "@dapp/images/places-logo.png";
+import CustomMenu from "./CustomMenu";
 
 const Navbar = () => {
   const isUnder818 = useMediaQuery("(max-width:818px)");
@@ -27,10 +30,11 @@ const Navbar = () => {
     <Stack
       direction="row"
       justifyContent="space-between"
-      bgcolor="#000000"
+      alignItems="center"
+      bgcolor="#080A0B"
       sx={{ padding: isUnder400 ? "18px 12px" : "18px 32px" }}
     >
-      <Typography
+      {/* <Typography
         variant="h6"
         color="white"
         fontSize={22}
@@ -43,28 +47,25 @@ const Navbar = () => {
         }}
       >
         Places
-      </Typography>
-      {/* <Image
-        width={146}
-        height={28}
-        alt="NEAR logo"
-        src="https://reart-web3-dapp.web.app/static/media/reart-logo.1b00c6108e98ce3070534edcbdc9125d.svg"
-      /> */}
+      </Typography> */}
+      <Image width={126} alt="NEAR logo" src={placesLogo} />
       <Stack direction="row">
-        <Button
-          onClick={() => setOpenNewPlaceDialog(true)}
-          variant="contained"
-          size={isUnder818 ? "small" : "medium"}
-          sx={{
-            background: "#3a5c5c",
-            color: "#ffffff",
-            textTransform: "none",
-            fontSize: 16,
-            mr: isUserConnected !== "yes" ? 2 : 0,
-          }}
-        >
-          New Place
-        </Button>
+        {isUserConnected === "yes" && (
+          <Button
+            onClick={() => setOpenNewPlaceDialog(true)}
+            variant="contained"
+            size={isUnder818 ? "small" : "medium"}
+            sx={{
+              background: "#3a5c5c",
+              color: "#ffffff",
+              textTransform: "none",
+              fontSize: 16,
+              mr: isUserConnected !== "yes" ? 2 : 0,
+            }}
+          >
+            Add New Place
+          </Button>
+        )}
 
         {isUserConnected !== "yes" && (
           <Button
@@ -82,7 +83,7 @@ const Navbar = () => {
           </Button>
         )}
 
-        {/* TODO: Mostrar quantidade de NEAR quando tiver connectado */}
+        <CustomMenu />
       </Stack>
 
       <NewPlaceDialog
