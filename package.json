@@ -20,6 +20,7 @@
     "@near-wallet-selector/my-near-wallet": "^8.9.1",
     "@near-wallet-selector/near-wallet": "^8.9.1",
     "axios": "^1.6.3",
+    "fuse.js": "^7.0.0",
     "near-api-js": "^2.1.4",
     "next": "14.0.4",
     "react": "^18",

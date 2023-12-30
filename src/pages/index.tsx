@@ -15,6 +15,7 @@ const Home = () => {
   const isUnder1230 = useMediaQuery("(max-width:1230px)");
   const isUnder818 = useMediaQuery("(max-width:818px)");
   const [places, setPlaces] = useState<Place[] | null>(null);
+  const [filteredPlaces, setFilteredPlaces] = useState<Place[] | null>(null);
   useCSCService();
 
   // Fetch places
@@ -38,6 +39,11 @@ const Home = () => {
   useEffect(() => {
     fetchPlaces();
   }, [fetchPlaces]);
+
+  // Handle the filtered places
+  const handleFilteredPlaces = useCallback((filteredPlaces: Place[] | null) => {
+    setFilteredPlaces(filteredPlaces);
+  }, []);
 
   return (
     <Stack p={4}>
@@ -80,7 +86,7 @@ const Home = () => {
             <strong>rate the place</strong> to help others discover their next
             adventure!
           </Typography>
-          <Search />
+          <Search places={places} onFilterPlaces={handleFilteredPlaces} />
         </Stack>
 
         <Stack
@@ -129,8 +135,20 @@ const Home = () => {
         flexWrap="wrap"
         justifyContent={isUnder818 ? "center" : "space-between"}
       >
-        {places &&
-          places.map((place) => <PlaceInfo key={place.id} place={place} />)}
+        {/* Give preference to filteredPlaces */}
+        {filteredPlaces ? (
+          <>
+            {filteredPlaces &&
+              filteredPlaces.map((place) => (
+                <PlaceInfo key={place.id} place={place} />
+              ))}
+          </>
+        ) : (
+          <>
+            {places &&
+              places.map((place) => <PlaceInfo key={place.id} place={place} />)}
+          </>
+        )}
       </Stack>
     </Stack>
   );
