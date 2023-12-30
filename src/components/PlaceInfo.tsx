@@ -5,40 +5,30 @@ import CardMedia from "@mui/material/CardMedia";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { Rating, Stack, useMediaQuery } from "@mui/material";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import VoteDialog from "./dialogs/VoteDialog";
-import { Address } from "@dapp/web3-services/near-interface";
+import SeeMoreDialog from "./dialogs/SeeMoreDialog";
+import ConnectDialog from "./dialogs/ConnectDialog";
+import { Place } from "@dapp/web3-services/near-interface";
+import { wallet } from "@dapp/web3-services";
 
 type Props = {
-  id: number;
-  name: string;
-  imageUrl: string;
-  avarageVotes: number;
-  address: Address;
-  description: string;
+  place: Place;
 };
 
-const PlaceInfo = ({
-  id,
-  name,
-  imageUrl,
-  avarageVotes,
-  address,
-  description,
-}: Props) => {
+const PlaceInfo = ({ place }: Props) => {
   const maxWidth454 = useMediaQuery("(max-width:454px)");
   const [openVoteDialog, setOpenVoteDialog] = useState(false);
+  const [openSeeMoreDialog, setOpenSeeMoreDialog] = useState(false);
+  const [openConnectDialog, setOpenConnectDialog] = useState(false);
 
-  const mapQuery = address
-    ? `${address.address}, ${address.city}, ${address.state_or_province}, ${address.country}`
-    : "Brazil";
-
-  const openMap = () => {
-    window.open(
-      `https://www.google.com/maps/search/?api=1&query=${mapQuery}`,
-      "_blank"
-    );
-  };
+  const rateHandler = useCallback(async () => {
+    if (await wallet.isSignedIn()) {
+      setOpenVoteDialog(true);
+      return;
+    }
+    setOpenConnectDialog(true);
+  }, []);
 
   return (
     <Card
@@ -55,17 +45,18 @@ const PlaceInfo = ({
       <Stack>
         <CardMedia
           sx={{ height: 140 }}
-          // image="https://mui.com/static/images/cards/paella.jpg"
-          // image={imageUrl}
-          image={imageUrl || "https://mui.com/static/images/cards/paella.jpg"}
-          title={name}
+          image={
+            place.pictures[0] ||
+            "https://mui.com/static/images/cards/paella.jpg"
+          }
+          title={place.name}
         />
         <CardContent>
           <Typography gutterBottom variant="h5" component="div">
-            {name}
+            {place.name}
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            {description ||
+            {place.description ||
               "Lizards are a widespread group of squamate reptiles, with over 6,000 species, ranging across all continents except Antarctica"}
           </Typography>
         </CardContent>
@@ -79,25 +70,40 @@ const PlaceInfo = ({
           flexDirection={maxWidth454 ? "column" : "row"}
           alignItems={maxWidth454 ? "center" : "start"}
         >
-          <Rating
-            sx={{ ml: 1, mb: maxWidth454 ? 1 : 0 }}
-            name="simple-controlled"
-            value={avarageVotes}
-            readOnly
-          />
-          <Button size="small" onClick={() => setOpenVoteDialog(true)}>
+          <Stack direction="row" alignItems="center">
+            <Typography variant="body2" color="text.secondary">
+              ({place.votes_counter})
+            </Typography>
+            <Rating
+              sx={{ ml: 1, mb: maxWidth454 ? 1 : 0 }}
+              name="simple-controlled"
+              value={place.avarage_votes}
+              readOnly
+            />
+          </Stack>
+          <Button size="small" onClick={rateHandler}>
             Rate it
           </Button>
-          <Button size="small" onClick={openMap}>
-            Open Map
+          <Button size="small" onClick={() => setOpenSeeMoreDialog(true)}>
+            See More
           </Button>
         </Stack>
       </CardActions>
       <VoteDialog
-        placeId={id}
-        placeName={name}
+        place={place}
         open={openVoteDialog}
         onClose={() => setOpenVoteDialog(false)}
+      />
+
+      <SeeMoreDialog
+        place={place}
+        open={openSeeMoreDialog}
+        onClose={() => setOpenSeeMoreDialog(false)}
+      />
+
+      <ConnectDialog
+        open={openConnectDialog}
+        onClose={() => setOpenConnectDialog(false)}
       />
     </Card>
   );

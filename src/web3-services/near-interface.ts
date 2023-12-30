@@ -15,6 +15,24 @@ export type PlaceInput = {
   place_type: string;
 };
 
+type Vote = {
+  account_id: string;
+  vote_value: number;
+  feedback: string;
+};
+
+export type Place = {
+  address: Address;
+  avarage_votes: number;
+  description: string;
+  id: number;
+  name: string;
+  pictures: string[];
+  place_type: string;
+  votes: Vote[];
+  votes_counter: number;
+};
+
 export class PlacesContractInterface {
   public wallet: Wallet;
 
@@ -24,14 +42,16 @@ export class PlacesContractInterface {
 
   // View methods
   async getPlaces() {
-    return await this.wallet.viewMethod({ method: "get_places" });
+    return (await this.wallet.viewMethod({ method: "get_places" })) as Promise<
+      Place[]
+    >;
   }
 
   async getPlacesById(placeId: number) {
-    return await this.wallet.viewMethod({
+    return (await this.wallet.viewMethod({
       method: "get_places_by_id",
       args: { place_id: placeId },
-    });
+    })) as Promise<Place>;
   }
 
   // Payable / Call Methods

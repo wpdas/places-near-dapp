@@ -5,10 +5,13 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { useState } from "react";
 import openUrl from "@dapp/utils/openUrl";
 import { Box } from "@mui/material";
+import { wallet } from "@dapp/web3-services";
+import useWeb3Auth from "@dapp/hooks/useWeb3Auth";
 
 const CustomMenu = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [open, setOpen] = useState(false);
+  const { isWalletConnected } = useWeb3Auth();
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -50,6 +53,7 @@ const CustomMenu = () => {
         >
           Project&apos;s Repository
         </MenuItem>
+
         <MenuItem
           onClick={() =>
             openLink("https://www.linkedin.com/in/wenderson-pires-silva/")
@@ -57,6 +61,10 @@ const CustomMenu = () => {
         >
           Author&apos;s LinkedIn
         </MenuItem>
+
+        {isWalletConnected && (
+          <MenuItem onClick={() => wallet.signOut()}>Disconnect</MenuItem>
+        )}
       </Menu>
     </Box>
   );

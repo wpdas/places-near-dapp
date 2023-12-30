@@ -7,7 +7,6 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import {
   Box,
-  CircularProgress,
   FormControl,
   InputLabel,
   MenuItem,
@@ -18,6 +17,7 @@ import { useState } from "react";
 import useCSCService from "@dapp/hooks/useCSCService";
 import { contract } from "@dapp/web3-services";
 import { placesUpdateObservable } from "@dapp/utils/observables";
+import Spinner from "../Spinner";
 
 type Props = {
   open: boolean;
@@ -95,9 +95,7 @@ export default function NewPlaceDialog({ open, onClose }: Props) {
         </DialogContentText>
 
         {loading ? (
-          <Stack alignItems="center" direction="column" m={2}>
-            <CircularProgress />
-          </Stack>
+          <Spinner />
         ) : (
           <Stack>
             <TextField
@@ -151,6 +149,7 @@ export default function NewPlaceDialog({ open, onClose }: Props) {
                     <MenuItem value="building">Building</MenuItem>
                     <MenuItem value="travel">Travel</MenuItem>
                     <MenuItem value="food">Food</MenuItem>
+                    <MenuItem value="food">Beauty</MenuItem>
                     <MenuItem value="landscape">Landscape</MenuItem>
                     <MenuItem value="shopping">Shopping</MenuItem>
                     <MenuItem value="company">Company</MenuItem>
@@ -265,11 +264,7 @@ export default function NewPlaceDialog({ open, onClose }: Props) {
               </Stack>
             )}
 
-            {(loadingStates || loadingCities) && (
-              <Stack alignItems="center" direction="column" m={2}>
-                <CircularProgress />
-              </Stack>
-            )}
+            {(loadingStates || loadingCities) && <Spinner />}
           </Stack>
         )}
       </DialogContent>

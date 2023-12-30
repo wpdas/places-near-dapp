@@ -19,7 +19,6 @@ import { setupLedger } from "@near-wallet-selector/ledger";
 import { setupMyNearWallet } from "@near-wallet-selector/my-near-wallet";
 import { QueryResponseKind } from "near-api-js/lib/providers/provider";
 
-// TODO: Tem como pagar menos (que 0.25 NEAR)?
 const THIRTY_TGAS = "30000000000000";
 const NO_DEPOSIT = "0";
 
@@ -40,7 +39,7 @@ export class Wallet {
   }
 
   // To be called when the website loads
-  async startUp(openSignInModal = true) {
+  async startUp(openSignInModal = false) {
     this.walletSelector = await setupWalletSelector({
       network: NETWORK === "mainnet" ? "mainnet" : "testnet",
       modules: [

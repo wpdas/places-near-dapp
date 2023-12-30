@@ -1,26 +1,29 @@
 import PlaceInfo from "@dapp/components/PlaceInfo";
 import Search from "@dapp/components/Search";
 import { Box, Stack, Typography, useMediaQuery } from "@mui/material";
+import SentimentVeryDissatisfiedIcon from "@mui/icons-material/SentimentVeryDissatisfied";
 import Image from "next/image";
 import nearLogo from "@dapp/images/near-logo.png";
 import useCSCService from "@dapp/hooks/useCSCService";
 import { useCallback, useEffect, useState } from "react";
 import { contract } from "@dapp/web3-services";
 import { placesUpdateObservable } from "@dapp/utils/observables";
+import { Place } from "@dapp/web3-services/near-interface";
+import Spinner from "@dapp/components/Spinner";
 
 const Home = () => {
   const isUnder1230 = useMediaQuery("(max-width:1230px)");
   const isUnder818 = useMediaQuery("(max-width:818px)");
+  const [places, setPlaces] = useState<Place[] | null>(null);
   useCSCService();
 
-  // TODO: Criar interface para o Place
-  const [places, setPlaces] = useState<any>([]);
+  // Fetch places
   const fetchPlaces = useCallback(async () => {
     const _places = await contract.getPlaces();
     setPlaces(_places);
-    console.log("PLACESSSS", _places);
   }, [setPlaces]);
 
+  // Initial setup for places
   useEffect(() => {
     const handler = () => {
       fetchPlaces();
@@ -31,7 +34,7 @@ const Home = () => {
     };
   }, [fetchPlaces]);
 
-  // Load places
+  // Call fetchPlaces only once
   useEffect(() => {
     fetchPlaces();
   }, [fetchPlaces]);
@@ -102,30 +105,32 @@ const Home = () => {
         </Stack>
       </Stack>
 
-      {/* TODO: Ir carregando de 16 em 16 quando for baixando a tela */}
-      {/* TODO: Usar Flex ao inves de Grid */}
+      {!places && (
+        <Box mt={20}>
+          <Spinner />
+        </Box>
+      )}
+
+      {/* No places registered message */}
+      {places && places.length === 0 && (
+        <Stack alignItems="center" mt={8}>
+          <Typography color="text.secondary" mb={1}>
+            no places registered still
+          </Typography>
+          <SentimentVeryDissatisfiedIcon
+            sx={{ color: "text.secondary" }}
+            fontSize="large"
+          />
+        </Stack>
+      )}
 
       <Stack
         direction="row"
         flexWrap="wrap"
         justifyContent={isUnder818 ? "center" : "space-between"}
       >
-        {places.map((place: any) => (
-          <PlaceInfo
-            key={place.id}
-            id={place.id}
-            name={place.name}
-            imageUrl={place.pictures[0]}
-            avarageVotes={place.avarage_votes}
-            address={place.address}
-            description={place.description}
-          />
-        ))}
-
-        <PlaceInfo name="Lizard" />
-        <PlaceInfo name="Lizard" />
-        <PlaceInfo name="Lizard" />
-        <PlaceInfo name="Lizard" />
+        {places &&
+          places.map((place) => <PlaceInfo key={place.id} place={place} />)}
       </Stack>
     </Stack>
   );
