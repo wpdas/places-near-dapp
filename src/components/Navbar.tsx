@@ -1,4 +1,4 @@
-import { Button, Stack, useMediaQuery } from "@mui/material";
+import { Button, Stack, Typography, useMediaQuery } from "@mui/material";
 import { useCallback, useState } from "react";
 import NewPlaceDialog from "./dialogs/NewPlaceDialog";
 import { wallet } from "@dapp/web3-services";
@@ -6,9 +6,11 @@ import Image from "next/image";
 import placesLogo from "@dapp/images/places-logo.png";
 import CustomMenu from "./CustomMenu";
 import useWeb3Auth from "@dapp/hooks/useWeb3Auth";
+import { NETWORK } from "@dapp/web3-services/near-wallet";
 
 const Navbar = () => {
   const isUnder818 = useMediaQuery("(max-width:818px)");
+  const maxWidth615 = useMediaQuery("(max-width:615px)");
   const isUnder400 = useMediaQuery("(max-width:400px)");
   const [openNewPlaceDialog, setOpenNewPlaceDialog] = useState(false);
   const { isWalletConnected, ready } = useWeb3Auth();
@@ -19,14 +21,28 @@ const Navbar = () => {
 
   return (
     <Stack
-      direction="row"
+      direction={maxWidth615 ? "column" : "row"}
       justifyContent="space-between"
       alignItems="center"
       bgcolor="#080A0B"
       sx={{ padding: isUnder400 ? "18px 12px" : "18px 32px" }}
     >
       <Image width={126} alt="NEAR logo" src={placesLogo} />
-      <Stack direction="row">
+
+      <Typography
+        fontSize={16}
+        color="white"
+        mb={maxWidth615 ? 1 : 0}
+        mt={maxWidth615 ? 1 : 0}
+      >
+        network: <strong>{NETWORK}</strong>
+      </Typography>
+
+      <Stack
+        direction={maxWidth615 ? "row-reverse" : "row"}
+        width={maxWidth615 ? "100%" : "initial"}
+        justifyContent={maxWidth615 ? "space-between" : "start"}
+      >
         {isWalletConnected && (
           <Button
             onClick={() => setOpenNewPlaceDialog(true)}
@@ -60,7 +76,7 @@ const Navbar = () => {
           </Button>
         )}
 
-        <CustomMenu />
+        <CustomMenu sx={{ ml: maxWidth615 ? 0 : 1 }} />
       </Stack>
 
       <NewPlaceDialog

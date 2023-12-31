@@ -4,11 +4,15 @@ import MenuItem from "@mui/material/MenuItem";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { useState } from "react";
 import openUrl from "@dapp/utils/openUrl";
-import { Box } from "@mui/material";
+import { Box, SxProps, Theme } from "@mui/material";
 import { wallet } from "@dapp/web3-services";
 import useWeb3Auth from "@dapp/hooks/useWeb3Auth";
 
-const CustomMenu = () => {
+type Props = {
+  sx?: SxProps<Theme>;
+};
+
+const CustomMenu = ({ sx }: Props) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [open, setOpen] = useState(false);
   const { isWalletConnected } = useWeb3Auth();
@@ -28,7 +32,7 @@ const CustomMenu = () => {
   };
 
   return (
-    <Box ml={2}>
+    <Box sx={sx}>
       <IconButton
         aria-label="more"
         id="basic-button"

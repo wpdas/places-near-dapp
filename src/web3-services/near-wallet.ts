@@ -22,7 +22,7 @@ import { QueryResponseKind } from "near-api-js/lib/providers/provider";
 const THIRTY_TGAS = "30000000000000";
 const NO_DEPOSIT = "0";
 
-const NETWORK = process.env.NEXT_PUBLIC_NETWORK || "testnet";
+export const NETWORK = process.env.NEXT_PUBLIC_NETWORK || "testnet";
 const LOCAL_STORAGE_KEY_PREFIX = "places:keystore:";
 
 type ResultType = QueryResponseKind & { result: any };
