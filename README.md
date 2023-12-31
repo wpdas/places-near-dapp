@@ -1,5 +1,7 @@
 ## <img alt="Reart Logo" src="./src/images/places-logo.png" width="230" />
 
+This DApp allows users to store places, rate and navigate through them.
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
