@@ -149,7 +149,7 @@ export default function NewPlaceDialog({ open, onClose }: Props) {
                     <MenuItem value="building">Building</MenuItem>
                     <MenuItem value="travel">Travel</MenuItem>
                     <MenuItem value="food">Food</MenuItem>
-                    <MenuItem value="food">Beauty</MenuItem>
+                    <MenuItem value="beauty">Beauty</MenuItem>
                     <MenuItem value="landscape">Landscape</MenuItem>
                     <MenuItem value="shopping">Shopping</MenuItem>
                     <MenuItem value="company">Company</MenuItem>
