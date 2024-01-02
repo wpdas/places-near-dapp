@@ -28,3 +28,16 @@ bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+### Env vars
+
+```sh
+# API to get Countries, States and Cities: https://countrystatecity.in/
+NEXT_PUBLIC_COUNTRY_STATE_CITY_API_KEY=<your country state city API key>
+
+# NETWORK (testnet or mainnet)
+NEXT_PUBLIC_NETWORK=testnet
+
+#The smart contract ID (ID of the account where the contract was deployed)
+NEXT_PUBLIC_CONTRACT_NAME=<smart contract - account id>
+```
